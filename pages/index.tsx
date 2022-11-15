@@ -8,7 +8,7 @@ const Home: NextPage = () => {
   const [wallet, setwallet] = useState('');
   const [collection, setCollection] = useState('');
   const [fetchForCollection, setFetchForCollection] = useState(false);
-  const [nfts, setNfts] = useState([]);
+  const [nfts, setNfts] = useState<any[]>([]);
   const [pageCount, setPageCount] = useState('');
 
   const fetchNfts = async () => {
@@ -33,7 +33,7 @@ const Home: NextPage = () => {
     }
   }
 
-  console.log(nfts)
+  // console.log(nfts)
   const fetchNftsForCollection = async () => {
     if(collection.length){
       const api_key = 'rknzIJr16GzJWNtZSkAov2vvYwkiImYL';
@@ -58,25 +58,39 @@ const Home: NextPage = () => {
       <div className="flex w-full flex-col items-center justify-center py-8 gap-y-3 ">
         <div className="flex flex-col w-full justify-center items-center gap-y-2">
           <h1 className='text-2xl font-bold'>NFT Gallery</h1>
-          <input type="text" className="w-2/5 bg-slate-100 py-2 px-2 rounded-lg text-gray-800 focus:outline-blue-300 disabled:bg-slate-50 disabled:text-gray-50" placeholder='Enter wallet addresss' disabled={fetchForCollection} onChange={(e) => setwallet(e.target.value)}/>
-          <input type="text" className="w-2/5 bg-slate-100 py-2 px-2 rounded-lg text-gray-800 focus:outline-blue-300 disabled:bg-slate-50 disabled:text-gray-50" placeholder='Enter collection addresss' onChange={(e) => setCollection(e.target.value)}/>
+          <input type="text" className="w-4/5 md:w-2/5 bg-slate-100 py-2 px-2 rounded-lg text-gray-800 focus:outline-blue-300 disabled:bg-slate-50 disabled:text-gray-50" placeholder='Enter wallet addresss' disabled={fetchForCollection} onChange={(e) => setwallet(e.target.value)}/>
+          <input type="text" className="w-4/5 md:w-2/5 bg-slate-100 py-2 px-2 rounded-lg text-gray-800 focus:outline-blue-300 disabled:bg-slate-50 disabled:text-gray-50" placeholder='Enter collection addresss' onChange={(e) => setCollection(e.target.value)}/>
           <label htmlFor="">
             <input type="checkbox" className='mr-2' onChange={(e) => setFetchForCollection(e.target.checked)}/>
             Fetch for collection
           </label>
           <button
-           className='w-1/5 bg-blue-400 text-white py-3 rounded mt-3 disabled:bg-slate-500'
+           className='w-4/5 md:w-1/5 bg-blue-400 text-white py-3 rounded mt-3 disabled:bg-slate-500'
            onClick={() => {
             if(fetchForCollection){
               fetchNftsForCollection()
             }else fetchNfts()
           }}>Fetch NFTS</button>
-
+        
+          {
+            collection.length && <div className="w-100">
+              <h1 className='font-bold text-2xl text-gray-800 mt-4'>{nfts[0]?.contractMetadata?.name}</h1>
+              <p className='text-lg text-gray-500 mt-2 text-center'>{nfts[0]?.contractMetadata?.symbol}</p>
+            </div>
+          }
+          
           <div className="flex flex-wrap justify-center p-3 w-5/6 mt-4 gap-x-3 gap-y-12">
             {
-              nfts && nfts.map(({title, description, contract, media, tokenUri}, index) => {
+              nfts && nfts.map(({title, description, contract, media, id, metadata}, index) => {
                 return(
-                  <NFTCARDS title={title} description={description} contract={contract} media={media} key={index}/>
+                  <NFTCARDS 
+                  title={title} 
+                  description={description} 
+                  contract={contract} 
+                  media={media} 
+                  key={index} 
+                  metadata={metadata}
+                  id={id}/>
                 )
               })
             }  
